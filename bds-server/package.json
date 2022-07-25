@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/bdsconvert/bds-server/issues"
   },
-  "homepage": "https://github.com/bdsconvert/bds-server#readme"
+  "homepage": "https://github.com/bdsconvert/bds-server#readme",
+  "devDependencies": {
+    "express": "^4.18.1"
+  }
 }
