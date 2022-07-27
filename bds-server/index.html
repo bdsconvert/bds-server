@@ -162,11 +162,15 @@
         if (launch === 'Home') {
           console.log("Retrieving Home page from BDS Server")
           fetch('./home', {method: 'GET', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}})
-          .then(res => res.text())
+          .then(res => res.json())
           .then(data => {
-            document.querySelector(`content`).innerHTML = data;
+            let titles = '';
+            data.forEach(item => {
+              titles += `<tr><td>${item.recref}</td><td>${item.title}<td>${item.author}</td></td></tr>`;
+            });
+            document.querySelector(`content`).innerHTML = `<table border="1" width="600px"></tr><th>RecRef</th><th>Title</th><th>Author</th></tr>${titles}</table>`;
             // if (currentChild) {
-            //   console.log("Removing child Script!")
+            //   console.log("Removing child Script!") 
             //   document.body.removeChild(currentChild);
             // }
             // const home = document.createElement("script");
