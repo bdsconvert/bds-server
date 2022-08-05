@@ -164,9 +164,11 @@
           fetch('./home', {method: 'GET', mode: 'no-cors', headers: {'Content-Type': 'text/plain'}})
           .then(res => res.json())
           .then(data => {
+            console.log(data);
             let titles = '';
             data.forEach(item => {
-              titles += `<tr><td>${item.recref}</td><td>${item.title}<td>${item.author}</td></td></tr>`;
+              const title = JSON.parse(item);
+              titles += `<tr><td>${title.recref}</td><td>${title.title}<td>${title.author}</td></td></tr>`;
             });
             document.querySelector(`content`).innerHTML = `<table border="1" width="600px"></tr><th>RecRef</th><th>Title</th><th>Author</th></tr>${titles}</table>`;
             // if (currentChild) {

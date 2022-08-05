@@ -1,6 +1,6 @@
-const { once } = require('events');
+// const { once } = require('events');
 const fs = require('fs');
-const { title } = require('process');
+// const { title } = require('process');
 const readline = require('readline');
 
 // create random json data
@@ -97,7 +97,7 @@ const sortTitles = (user, file, sortby) => {
 //sortTitles('Madhu', 'file1.xml.json', 'author');
 
 
-const searchTitles = async (user, file, searchby, pagenum) => {
+const searchTitles = async (user, file, searchby, searchkey, pagenum) => {
     let titles = [];
     let pagestart = (pagenum-1) * 10;
     let pageend = pagenum * 10;
@@ -109,15 +109,17 @@ const searchTitles = async (user, file, searchby, pagenum) => {
     console.log(pagestart,pageend)
     let ind = 0;
     for await (const line of stream) {
-        if (ind >= pagestart && ind < pageend) {
-            titles.push(line);
+        const title = JSON.parse(line).title;
+        if (title.search(`${searchkey}`) !== -1) {
+            if (ind >= pagestart && ind < pageend) {
+                titles.push(line);
+            }
+            if (titles.length == 10) 
+                break;
+            ind++;
         }
-        if (titles.length == 10) 
-            break;
-        
-        ind++;
     }
     console.log(titles);
 
 }
-searchTitles('Madhu', 'file1.xml.json', 'title', 15000);
+searchTitles('Madhu', 'file1.xml.json', 'title', 'Title 005', 1);

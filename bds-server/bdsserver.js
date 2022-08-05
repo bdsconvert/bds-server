@@ -1,18 +1,14 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const readline = require('readline');
+
 const app = express();
 const port = 3000;
 
 app.use(express.static('assets'));
 app.use(express.static('src/components'));
 
-//// create random json data
-// for (let i=1000000; i>0; i--) {
-//   let titlesuffix = '0'.repeat(7-i.toString().length) + i.toString();
-//   fs.appendFileSync(`${__dirname}/users/Madhu/file3.xml.json`,`{"recref": "${Math.floor(Math.random() * 100000000)}", "title": "Title ${titlesuffix}", "author": "Author ${Math.random().toString(36).substring(2)}"},\n`); 
-//   //fs.appendFileSync(`${__dirname}/users/Madhu/file2.xml.json`,`{"recref": "${Math.floor(Math.random() * 10000000)}", "title": "Title ${Math.random().toString(36).substring(2)}", "author": "Author ${Math.random().toString(36).substring(2)}"},\n`); 
-// }
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, './index.html'));
@@ -20,8 +16,8 @@ app.get('/', (req, res) => {
 
 app.get('/home', async (req, res) => {
 
-  getTitles ('Madhu', 'file3.xml.json', 'title', 100, res);
-
+  //getTitles ('Madhu', 'file3.xml.json', 'title', 100, res);
+  searchTitles('Madhu', 'file1.xml.json', 'title', 'Title 001', 1, res);
     //res.sendFile(path.join(__dirname, '/src/components/bds-home.js'));
 
 });
@@ -71,3 +67,30 @@ const getTitles = (user, file, sortby, page, res) => {
 
 }
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+const searchTitles = async (user, file, searchby, searchkey, pagenum, res) => {
+  let titles = [];
+  let pagestart = (pagenum-1) * 10;
+  let pageend = pagenum * 10;
+  const stream = readline.createInterface ({
+      input: fs.createReadStream(`${__dirname}/users/${user}/${file}.${searchby}`, {flag: 'r', encoding: 'utf-8'}),
+      crlfDelay: Infinity
+  });
+
+  console.log(pagestart,pageend)
+  let ind = 0;
+  for await (const line of stream) {
+      const title = JSON.parse(line).title;
+      if (title.search(`${searchkey}`) !== -1) {
+          if (ind >= pagestart && ind < pageend) {
+              titles.push(line);
+          }
+          if (titles.length == 10) 
+              break;
+          ind++;
+      }
+  }
+  res.send(titles);
+
+}
+////////////////////////////////////////////////////////////////////////////////////////////////
